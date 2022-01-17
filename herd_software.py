@@ -5,7 +5,6 @@ Project: Relational Database
 '''
 
 #import needed libraries
-from operator import ge
 import sqlite3
 
 # Connect to database, creates new if not already present
@@ -17,7 +16,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS herd (ear_tag INT, birth_date DATE, g
 
 # Display menu options
 choice = None
-while choice != 6:
+while choice != '6':
     # Choice 1 is displayed so I can make minor changes when it comes time to implement it.
 
     print('1) Select Herd (Inoperable right now)')
@@ -50,9 +49,10 @@ while choice != 6:
             gender = input('Gender (M/F): ')
             polled = input('Polled (Y/N): ')
             location = input('Current Location: ')
-            values = (ear_tag, birth_date, gender, polled, location)
+            values = (ear_tag, birth_date, gender.upper(), polled.upper(), location.capitalize())
 
             cursor.execute("INSERT INTO herd VALUES (?,?,?,?,?)", values)
+
             # IMPORTANT!! This is what saves the information to the data base for future use
             connection.commit()
         except ValueError:
@@ -60,11 +60,24 @@ while choice != 6:
 
     elif choice == '4':
         # Update animal (location)
-        pass
+        try:
+            ear_tag = input('Enter ear tag: ')
+            location = input('Enter new location: ')
+            values = (location.capitalize(), ear_tag)
+
+            cursor.execute("UPDATE herd SET location = ? WHERE ear_tag = ?", values)
+            connection.commit()
+
+        except ValueError:
+            print("Invalid ear tag")
 
     elif choice == '5':
         # Delete an animal
-        pass
+        ear_tag = input('Enter ear tag: ')
+        values = (ear_tag,)
+
+        cursor.execute("DELETE FROM herd WHERE ear_tag = ?", values)
+        connection.commit()
 
     else:
         print(choice)  
@@ -75,6 +88,8 @@ while choice != 6:
 '''    
 First table columns:
 ID, ear tag, birth date,  gender, breed, polled, location
+
+Future Goals:
 create a link to an additional table with vaccine list
 create a link to additional table with medications
 decide how to record pedegree
