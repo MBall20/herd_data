@@ -5,6 +5,7 @@ Project: Relational Database
 '''
 
 #import needed libraries
+from operator import ge
 import sqlite3
 
 # Connect to database, creates new if not already present
@@ -35,12 +36,27 @@ while choice != 6:
 
     if choice == '2':
         # Display contents of herd
-        cursor.execute('SELECT * FROM herd ORDER BY ear_tag ASC')
-        pass
+        cursor.execute('SELECT * FROM herd')
+        print("{:>10}  {:>10}  {:>10} {:>10} {:>10}".format("Ear Tag", "Birth Date", "Gender", "Polled", "Location"))
+        for animal in cursor.fetchall():
+            print("{:>10}  {:>10}  {:>10} {:>10} {:>10}".format(animal[0], animal[1], animal [2], animal [3], animal[4]))
+        
 
     elif choice == '3':
         # Add animal to herd
-        pass
+        try:
+            ear_tag = input('Ear tag: ')
+            birth_date = input('Date of Birth: ')
+            gender = input('Gender (M/F): ')
+            polled = input('Polled (Y/N): ')
+            location = input('Current Location: ')
+            values = (ear_tag, birth_date, gender, polled, location)
+
+            cursor.execute("INSERT INTO herd VALUES (?,?,?,?,?)", values)
+            # IMPORTANT!! This is what saves the information to the data base for future use
+            connection.commit()
+        except ValueError:
+            print('Invalid Information')
 
     elif choice == '4':
         # Update animal (location)
@@ -50,7 +66,8 @@ while choice != 6:
         # Delete an animal
         pass
 
-        
+    else:
+        print(choice)  
 
 
 
