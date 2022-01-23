@@ -6,9 +6,13 @@ Project: Relational Database
 
 #import needed libraries
 import sqlite3
+import datetime
 
-# Connect to database, creates new if not already present
-connection = sqlite3.connect('cattle_database.db')
+# Get current date and store as a variable (not needed right now)
+#currentDate = datetime.datetime.now()
+
+# Connect to database, creates new if not already present contents after the comma allows for date time conversions between python and sqlite3
+connection = sqlite3.connect('cattle_database.db') #, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) # On to something, but haven't figured the rest of it out.
 cursor = connection.cursor()
 
 # Create base table to work with if it does not already exist
@@ -40,24 +44,23 @@ while choice != '6':
         print("{:>10}  {:>10}  {:>10} {:>10} {:>10}".format("Ear Tag", "Birth Date", "Gender", "Polled", "Location"))
         for animal in cursor.fetchall():
             print("{:>10}  {:>10}  {:>10} {:>10} {:>10}".format(animal[0], animal[1], animal [2], animal [3], animal[4]))
+            #print(type(animal[1]))
         
 
     elif choice == '3':
         # Add animal to herd
-        try:
-            ear_tag = input('Ear tag: ')
-            birth_date = input(int('Date of Birth: '))
-            gender = input('Gender (M/F): ')
-            polled = input('Polled (Y/N): ')
-            location = input('Current Location: ')
-            values = (ear_tag, sqlite3.Date(birth_date), gender.upper(), polled.upper(), location.capitalize())
+        ear_tag = input('Ear tag: ')
+        birth_date = input('Date of Birth: ')
+        gender = input('Gender (M/F): ')
+        polled = input('Polled (Y/N): ')
+        location = input('Current Location: ')
 
-            cursor.execute("INSERT INTO herd VALUES (?,?,?,?,?)", values)
+        values = (ear_tag, birth_date, gender.upper(), polled.upper(), location.capitalize())
+        #print(type(birth_date))
 
-            # IMPORTANT!! This is what saves the information to the data base for future use
-            connection.commit()
-        except ValueError:
-            print('Invalid Information')
+        cursor.execute("INSERT INTO herd VALUES (?,?,?,?,?)", values)
+        # IMPORTANT!! This is what saves the information to the data base for future use
+        connection.commit()
 
     elif choice == '4':
         # Update animal (location)
